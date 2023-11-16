@@ -56,7 +56,6 @@ func AddFrame(imgPath, outPath string, borderRatio float64) error {
 	defer outIMG.Close()
 
 	// Encode the image and save it as JPEG
-	// TODO: Add more options
 	err = jpeg.Encode(outIMG, canvas, nil)
 	if err != nil {
 		fmt.Printf("Error saving image: %v\n", err)
@@ -68,6 +67,7 @@ func AddFrame(imgPath, outPath string, borderRatio float64) error {
 }
 
 func AddFrames(sourceDir, destinationDir string, borderRatio float64) error {
+	// Multi-threading support
 	images, err := os.ReadDir(sourceDir)
 	if err != nil {
 		fmt.Printf("Error reading files from %s: %v\n", sourceDir, err)
