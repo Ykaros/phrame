@@ -5,18 +5,18 @@ package cmd
 
 import (
 	"fmt"
-	"os"
-
-	"github.com/Ykaros/phrame/utils" // Import the utils package
+	"github.com/Ykaros/phrame/utils"
 	"github.com/spf13/cobra"
+	"os"
 )
 
+// TODO: 0) One image or dir; 1) More save options; 2) More color options
 var rootCmd = &cobra.Command{
 	Use:   "phrame",
 	Short: "A CLI tool written in Go to add a frame to photo(s)",
 	Run: func(cmd *cobra.Command, args []string) {
 		sourceDir, destinationDir := args[0], args[1]
-		borderRatio, _ := cmd.Flags().GetFloat64("borderRatio") // Assuming you have a borderRatio flag
+		borderRatio, _ := cmd.Flags().GetFloat64("borderRatio")
 
 		err := utils.AddFrames(sourceDir, destinationDir, borderRatio)
 		if err != nil {
