@@ -1,4 +1,4 @@
-# <img src="https://github.com/Ykaros/phrame/blob/main/utils/logo.png" width="90" height="90"> <span style="font-size: 4em;">phrame</span>
+# <img src="https://github.com/Ykaros/phrame/blob/main/utils/logo.png" width="90" height="90"> 
 
 One CLI tool to add frames to photos, just that and nothing more!
 
