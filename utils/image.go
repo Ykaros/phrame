@@ -14,6 +14,15 @@ import (
 	"time"
 )
 
+func IsDir(path string) bool {
+	fileInfo, err := os.Stat(path)
+	if err != nil {
+		// Handle the error, path might not exist, or there could be another issue
+		return false
+	}
+	return fileInfo.IsDir()
+}
+
 // TDDO: Image validation
 func readImage(path string) (image.Image, error) {
 	img, err := os.Open(path)
@@ -29,7 +38,6 @@ func readImage(path string) (image.Image, error) {
 }
 
 func saveImage(path string, photo image.Image) error {
-	//fmt.Println(path)
 	outIMG, err := os.Create(path)
 	if err != nil {
 		return err
@@ -90,19 +98,13 @@ func createCanvas(photo image.Image, borderRatio float64, squared bool, c color.
 }
 
 func AddFrames(sourcePath, outPath string, borderRatio float64, squared bool, c color.RGBA) error {
-	if outPath == "" {
+	if outPath == "" || IsDir(outPath) {
 		currentTime := time.Now()
-		outPath = currentTime.Format("2112_01_02_03_04_05")
-	}
-
-	// Check if the source exists and source type
-	fileInfo, err := os.Stat(sourcePath)
-	if err != nil {
-		fmt.Printf("Error accessing file(s) at %s: %v\n", sourcePath, err)
+		outPath += currentTime.Format("2112_01_02_03_04_05")
 	}
 
 	// Determine if the source is a directory or a file
-	if fileInfo.IsDir() {
+	if IsDir(sourcePath) {
 		err := os.Mkdir(outPath, os.ModePerm)
 		if err != nil {
 			return err
@@ -131,7 +133,7 @@ func AddFrames(sourcePath, outPath string, borderRatio float64, squared bool, c 
 				err = saveImage(savePath, canvas)
 				if err != nil {
 					fmt.Printf("Error saving image %s: %v\n", savePath, err)
-					return
+					//return
 				}
 				fmt.Printf("Image successfully saved to: %s\n", savePath)
 			}(filepath.Join(sourcePath, file.Name()), filepath.Join(outPath, file.Name()))
