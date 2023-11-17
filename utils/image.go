@@ -20,12 +20,7 @@ func readImage(path string) (image.Image, error) {
 	if err != nil {
 		return nil, err
 	}
-	defer func(img *os.File) {
-		err := img.Close()
-		if err != nil {
-			//TODO: Handle error
-		}
-	}(img)
+	defer img.Close()
 	photo, _, err := image.Decode(img)
 	if err != nil {
 		return nil, err
@@ -39,12 +34,7 @@ func saveImage(path string, photo image.Image) error {
 	if err != nil {
 		return err
 	}
-	defer func(outIMG *os.File) {
-		err := outIMG.Close()
-		if err != nil {
-
-		}
-	}(outIMG)
+	defer outIMG.Close()
 	err = jpeg.Encode(outIMG, photo, nil)
 	if err != nil {
 		return err
@@ -53,31 +43,54 @@ func saveImage(path string, photo image.Image) error {
 }
 
 // TODO: Canvas shape
-func createCanvas(photo image.Image, borderRatio float64) *image.RGBA {
+func createCanvas(photo image.Image, borderRatio float64, squared bool) *image.RGBA {
 	// Determine the size of the border and the square
 	width, height := photo.Bounds().Dx(), photo.Bounds().Dy()
-	borderWidth := int(borderRatio * float64(min(width, height)))
-	squareSize := max(width, height) + 2*borderWidth
+	if squared {
+		borderWidth := int(borderRatio * float64(min(width, height)))
+		squareSize := max(width, height) + 2*borderWidth
 
-	// Create a squared RGBA canvas
-	canvas := image.NewRGBA(image.Rect(0, 0, squareSize, squareSize))
+		// Create a squared RGBA canvas
+		canvas := image.NewRGBA(image.Rect(0, 0, squareSize, squareSize))
 
-	// Calculate the starting point
-	startX := (squareSize - width) / 2
-	startY := (squareSize - height) / 2
+		// Calculate the starting point
+		startX := (squareSize - width) / 2
+		startY := (squareSize - height) / 2
 
-	// Fill the entire canvas with white
-	// More color options
-	draw.Draw(canvas, canvas.Bounds(),
-		&image.Uniform{color.White}, image.Point{}, draw.Over)
+		// Fill the entire canvas with white
+		// More color options
+		draw.Draw(canvas, canvas.Bounds(),
+			&image.Uniform{color.White}, image.Point{}, draw.Over)
 
-	// Place the photo at the center of the canvas
-	draw.Draw(canvas, image.Rect(startX, startY, startX+width, startY+height),
-		photo, image.Point{}, draw.Over)
-	return canvas
+		// Place the photo at the center of the canvas
+		draw.Draw(canvas, image.Rect(startX, startY, startX+width, startY+height),
+			photo, image.Point{}, draw.Over)
+		return canvas
+	} else {
+		borderWidth := int(borderRatio * float64(width))
+		borderHeight := int(borderRatio * float64(height))
+		// Create a squared RGBA canvas
+		canvas := image.NewRGBA(image.Rect(0, 0,
+			width+2*borderWidth, height+2*borderHeight))
+
+		// Calculate the starting point
+		startX := borderWidth
+		startY := borderHeight
+
+		// Fill the entire canvas with white
+		// More color options
+		draw.Draw(canvas, canvas.Bounds(),
+			&image.Uniform{color.White}, image.Point{}, draw.Over)
+
+		// Place the photo at the center of the canvas
+		draw.Draw(canvas, image.Rect(startX, startY, startX+width, startY+height),
+			photo, image.Point{}, draw.Over)
+		return canvas
+	}
+
 }
 
-func AddFrames(sourcePath, outPath string, borderRatio float64) error {
+func AddFrames(sourcePath, outPath string, borderRatio float64, squared bool) error {
 
 	if outPath == "" {
 		currentTime := time.Now()
@@ -116,7 +129,7 @@ func AddFrames(sourcePath, outPath string, borderRatio float64) error {
 					fmt.Printf("Error reading image %s: %v\n", imgPath, err)
 					return
 				}
-				canvas := createCanvas(photo, borderRatio)
+				canvas := createCanvas(photo, borderRatio, squared)
 				err = saveImage(savePath, canvas)
 				if err != nil {
 					fmt.Printf("Error saving image %s: %v\n", savePath, err)
@@ -136,7 +149,7 @@ func AddFrames(sourcePath, outPath string, borderRatio float64) error {
 		if err != nil {
 			return fmt.Errorf("Error reading image %s: %v", sourcePath, err)
 		}
-		canvas := createCanvas(photo, borderRatio)
+		canvas := createCanvas(photo, borderRatio, squared)
 		err = saveImage(outPath, canvas)
 		if err != nil {
 			return fmt.Errorf("Error saving image %s: %v", outPath, err)
