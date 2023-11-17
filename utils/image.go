@@ -11,6 +11,7 @@ import (
 	"os"
 	"path/filepath"
 	"sync"
+	"time"
 )
 
 // TDDO: Image validation
@@ -32,8 +33,8 @@ func readImage(path string) (image.Image, error) {
 	return photo, nil
 }
 
-// TODO: Ask to create dir if there is none
 func saveImage(path string, photo image.Image) error {
+	//fmt.Println(path)
 	outIMG, err := os.Create(path)
 	if err != nil {
 		return err
@@ -51,6 +52,7 @@ func saveImage(path string, photo image.Image) error {
 	return nil
 }
 
+// TODO: Canvas shape
 func createCanvas(photo image.Image, borderRatio float64) *image.RGBA {
 	// Determine the size of the border and the square
 	width, height := photo.Bounds().Dx(), photo.Bounds().Dy()
@@ -75,11 +77,12 @@ func createCanvas(photo image.Image, borderRatio float64) *image.RGBA {
 	return canvas
 }
 
-//func createDir(path string) error {
-//	return nil
-//}
-
 func AddFrames(sourcePath, outPath string, borderRatio float64) error {
+
+	if outPath == "" {
+		currentTime := time.Now()
+		outPath = currentTime.Format("2112_01_02_03_04_05")
+	}
 
 	// Check if the source exists and source type
 	fileInfo, err := os.Stat(sourcePath)
@@ -89,12 +92,15 @@ func AddFrames(sourcePath, outPath string, borderRatio float64) error {
 
 	// Determine if the source is a directory or a file
 	if fileInfo.IsDir() {
+		err := os.Mkdir(outPath, os.ModePerm)
+		if err != nil {
+			return err
+		}
 		images, err := os.ReadDir(sourcePath)
 		if err != nil {
 			fmt.Printf("Error reading files from %s: %v\n", sourcePath, err)
 		}
 
-		//channel := make(chan string)
 		var wg sync.WaitGroup
 		for _, file := range images {
 			//fmt.Println(file)
@@ -105,7 +111,6 @@ func AddFrames(sourcePath, outPath string, borderRatio float64) error {
 
 			go func(imgPath, savePath string) {
 				defer wg.Done()
-
 				photo, err := readImage(imgPath)
 				if err != nil {
 					fmt.Printf("Error reading image %s: %v\n", imgPath, err)
@@ -120,21 +125,22 @@ func AddFrames(sourcePath, outPath string, borderRatio float64) error {
 				fmt.Printf("Image successfully saved to: %s\n", savePath)
 			}(filepath.Join(sourcePath, file.Name()), filepath.Join(outPath, file.Name()))
 		}
-
 		wg.Wait() // Wait for all goroutines to finish
-		return nil
 
 	} else {
 		// Just one image
-		photo, _ := readImage(sourcePath)
+		format := filepath.Ext(sourcePath)
+		outPath = sourcePath[:len(sourcePath)-len(format)] + outPath + format
 
-		canvas := createCanvas(photo, borderRatio)
-
-		err := saveImage(outPath, canvas)
+		photo, err := readImage(sourcePath)
 		if err != nil {
-			fmt.Printf("Error saving image: %v\n", err)
+			return fmt.Errorf("Error reading image %s: %v", sourcePath, err)
 		}
-
+		canvas := createCanvas(photo, borderRatio)
+		err = saveImage(outPath, canvas)
+		if err != nil {
+			return fmt.Errorf("Error saving image %s: %v", outPath, err)
+		}
 		fmt.Printf("Image successfully saved to: %s\n", outPath)
 	}
 	return nil

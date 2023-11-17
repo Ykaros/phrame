@@ -1,0 +1,8 @@
+USE CASES:
+
+1. Add frames to all images from one dir to another dir
+2. Add frame to just one image and save it at the same dir
+3. Interactive terminal to 1) create an output dir
+4. Shape of the final image: 1) original ratio; 2) square
+5. Color options to frames: 0) white; 1) black; 2) predefined?; 3) #123456
+6. Sign the frame with font options (allow customized font choice)
