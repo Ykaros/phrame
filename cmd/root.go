@@ -28,9 +28,14 @@ var rootCmd = &cobra.Command{
 
 		borderRatio, _ := cmd.Flags().GetFloat64("borderRatio")
 		squareOption, _ := cmd.Flags().GetBool("square")
-		//colorOption, _ := cmd.Flags().GetBool("color")
+		colorOption, _ := cmd.Flags().GetString("color")
 
-		err := utils.AddFrames(sourcePath, destinationPath, borderRatio, squareOption)
+		c, err := utils.ParseHexColorFast(colorOption)
+		if err != nil {
+			fmt.Printf("Error adding frames: %v\n", err)
+			os.Exit(1)
+		}
+		err = utils.AddFrames(sourcePath, destinationPath, borderRatio, squareOption, c)
 		if err != nil {
 			fmt.Printf("Error adding frames: %v\n", err)
 			os.Exit(1)
@@ -47,5 +52,5 @@ func init() {
 	rootCmd.Flags().StringP("output", "o", "", "Output directory for images with frames")
 	rootCmd.Flags().Float64P("borderRatio", "b", 0.1, "Border ratio for the frame")
 	rootCmd.Flags().BoolP("square", "s", false, "Whether the frame is square or not")
-	// rootCmd.Flags().IntVarP(&formatOption, "format", "f", 1, "Whether the frame is colored or not")
+	rootCmd.Flags().StringP("color", "c", "0", "Frame color options")
 }

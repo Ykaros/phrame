@@ -42,8 +42,7 @@ func saveImage(path string, photo image.Image) error {
 	return nil
 }
 
-// TODO: Canvas shape
-func createCanvas(photo image.Image, borderRatio float64, squared bool) *image.RGBA {
+func createCanvas(photo image.Image, borderRatio float64, squared bool, c color.RGBA) *image.RGBA {
 	// Determine the size of the border and the square
 	width, height := photo.Bounds().Dx(), photo.Bounds().Dy()
 	if squared {
@@ -60,7 +59,7 @@ func createCanvas(photo image.Image, borderRatio float64, squared bool) *image.R
 		// Fill the entire canvas with white
 		// More color options
 		draw.Draw(canvas, canvas.Bounds(),
-			&image.Uniform{color.White}, image.Point{}, draw.Over)
+			&image.Uniform{c}, image.Point{}, draw.Over)
 
 		// Place the photo at the center of the canvas
 		draw.Draw(canvas, image.Rect(startX, startY, startX+width, startY+height),
@@ -80,7 +79,7 @@ func createCanvas(photo image.Image, borderRatio float64, squared bool) *image.R
 		// Fill the entire canvas with white
 		// More color options
 		draw.Draw(canvas, canvas.Bounds(),
-			&image.Uniform{color.White}, image.Point{}, draw.Over)
+			&image.Uniform{c}, image.Point{}, draw.Over)
 
 		// Place the photo at the center of the canvas
 		draw.Draw(canvas, image.Rect(startX, startY, startX+width, startY+height),
@@ -90,8 +89,7 @@ func createCanvas(photo image.Image, borderRatio float64, squared bool) *image.R
 
 }
 
-func AddFrames(sourcePath, outPath string, borderRatio float64, squared bool) error {
-
+func AddFrames(sourcePath, outPath string, borderRatio float64, squared bool, c color.RGBA) error {
 	if outPath == "" {
 		currentTime := time.Now()
 		outPath = currentTime.Format("2112_01_02_03_04_05")
@@ -129,7 +127,7 @@ func AddFrames(sourcePath, outPath string, borderRatio float64, squared bool) er
 					fmt.Printf("Error reading image %s: %v\n", imgPath, err)
 					return
 				}
-				canvas := createCanvas(photo, borderRatio, squared)
+				canvas := createCanvas(photo, borderRatio, squared, c)
 				err = saveImage(savePath, canvas)
 				if err != nil {
 					fmt.Printf("Error saving image %s: %v\n", savePath, err)
@@ -149,7 +147,7 @@ func AddFrames(sourcePath, outPath string, borderRatio float64, squared bool) er
 		if err != nil {
 			return fmt.Errorf("Error reading image %s: %v", sourcePath, err)
 		}
-		canvas := createCanvas(photo, borderRatio, squared)
+		canvas := createCanvas(photo, borderRatio, squared, c)
 		err = saveImage(outPath, canvas)
 		if err != nil {
 			return fmt.Errorf("Error saving image %s: %v", outPath, err)
