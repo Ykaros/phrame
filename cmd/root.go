@@ -7,6 +7,15 @@ import (
 	"fmt"
 	"github.com/Ykaros/phrame/utils"
 	"github.com/spf13/cobra"
+	"image/color"
+)
+
+var (
+	sourcePath      string
+	destinationPath string
+	borderRatio     float64
+	squareOption    bool
+	frameColor      string
 )
 
 var rootCmd = &cobra.Command{
@@ -17,7 +26,6 @@ var rootCmd = &cobra.Command{
 	Run: func(cmd *cobra.Command, args []string) {
 		sourcePath := args[0]
 
-		var destinationPath string
 		// Output path is optional and can be passed as a flag or as an argument
 		if len(args) > 1 {
 			destinationPath = args[1]
@@ -31,15 +39,15 @@ var rootCmd = &cobra.Command{
 			}
 		}
 
-		borderRatio, _ := cmd.Flags().GetFloat64("border")
-		squareOption, _ := cmd.Flags().GetBool("square")
-		colorOption, _ := cmd.Flags().GetString("color")
+		borderRatio, _ = cmd.Flags().GetFloat64("border")
+		squareOption, _ = cmd.Flags().GetBool("square")
+		frameColor, _ = cmd.Flags().GetString("color")
 
-		c, err := utils.ParseHexColorFast(colorOption)
+		c, err := utils.Hex2Color(frameColor)
 		if err != nil {
 			fmt.Printf("Invalid color format: %v\n", err)
 		}
-		err = utils.AddFrames(sourcePath, destinationPath, borderRatio, squareOption, c)
+		err = utils.AddFrames(sourcePath, destinationPath, borderRatio, squareOption, c, color.RGBA{0, 0, 0, 255}, "", 18)
 		if err != nil {
 			fmt.Printf("Error adding frames: %v\n", err)
 		}
@@ -54,6 +62,6 @@ func init() {
 	rootCmd.PersistentFlags().StringP("input", "i", "", "Original image(s) location")
 	rootCmd.PersistentFlags().StringP("output", "o", "", "Output directory for images with frames")
 	rootCmd.PersistentFlags().StringP("color", "c", "0", "Frame color options")
-	rootCmd.Flags().Float64P("border", "b", 0.1, "Border ratio for the frame")
+	rootCmd.PersistentFlags().Float64P("border", "b", 0.1, "Border ratio for the frame")
 	rootCmd.Flags().BoolP("square", "s", false, "Whether the frame is square or not")
 }

@@ -162,3 +162,53 @@ func AddFrames(sourcePath, outPath string, borderRatio float64, squared bool, c,
 	}
 	return nil
 }
+
+func Cut(sourcePath string, grid int) error {
+	photo, err := readImage(sourcePath)
+	if err != nil {
+		return fmt.Errorf("Error reading image %s: %v", sourcePath, err)
+	}
+	// Split the image into a grid
+	width, height := photo.Bounds().Dx(), photo.Bounds().Dy()
+	err = os.Mkdir("GRID", os.ModePerm)
+	if err != nil {
+		return err
+	}
+	if grid == 4 {
+		// Split the image into 4 parts
+		for i := 0; i < 2; i++ {
+			for j := 0; j < 2; j++ {
+				// Create a new RGBA canvas
+				canvas := image.NewRGBA(image.Rect(0, 0, width/2, height/2))
+				// Place the photo at the center of the canvas
+				draw.Draw(canvas, image.Rect(0, 0, width/2, height/2),
+					photo, image.Point{width / 2 * i, height / 2 * j}, draw.Over)
+				// Save the image
+				err = saveImage(fmt.Sprintf("GRID/out_%d_%d.jpg", i, j), canvas)
+				if err != nil {
+					return fmt.Errorf("Error saving image: %v", err)
+				}
+			}
+		}
+	} else if grid == 9 {
+		// Split the image into 9 parts
+		for i := 0; i < 3; i++ {
+			for j := 0; j < 3; j++ {
+				// Create a new RGBA canvas
+				canvas := image.NewRGBA(image.Rect(0, 0, width/3, height/3))
+				// Place the photo at the center of the canvas
+				draw.Draw(canvas, image.Rect(0, 0, width/3, height/3),
+					photo, image.Point{width / 3 * i, height / 3 * j}, draw.Over)
+				// Save the image
+				err = saveImage(fmt.Sprintf("GRID/out_%d_%d.jpg", i, j), canvas)
+				if err != nil {
+					return fmt.Errorf("Error saving image: %v", err)
+				}
+			}
+		}
+
+	} else {
+		return fmt.Errorf("Invalid grid option")
+	}
+	return nil
+}

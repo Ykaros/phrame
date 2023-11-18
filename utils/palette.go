@@ -12,7 +12,7 @@ import (
 var errInvalidFormat = errors.New("UH OH! Invalid format.. " +
 	"Please use 0 or 1 or #RRGGBB or #RRGGBBAA.. ")
 
-func ParseHexColorFast(s string) (c color.RGBA, err error) {
+func Hex2Color(s string) (c color.RGBA, err error) {
 	c = color.RGBA{0xff, 0xff, 0xff, 0xff}
 
 	if len(s) == 1 {

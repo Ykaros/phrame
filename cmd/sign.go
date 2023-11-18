@@ -5,7 +5,7 @@ package cmd
 
 import (
 	"fmt"
-
+	"github.com/Ykaros/phrame/utils"
 	"github.com/spf13/cobra"
 )
 
@@ -14,7 +14,26 @@ var signCmd = &cobra.Command{
 	Use:   "sign",
 	Short: "Sign the framed image",
 	Run: func(cmd *cobra.Command, args []string) {
-		fmt.Println("sign called")
+		signature, _ := cmd.Flags().GetString("signature")
+		fontSize, _ := cmd.Flags().GetInt("fontSize")
+		fontColor, _ := cmd.Flags().GetString("fontColor")
+
+		c, err := utils.Hex2Color(frameColor)
+		if err != nil {
+			fmt.Printf("Invalid color format: %v\n", err)
+		}
+
+		fc, err := utils.Hex2Color(fontColor)
+		if err != nil {
+			fmt.Printf("Invalid color format: %v\n", err)
+		}
+
+		// Call the AddFrames function with the new parameters
+		err = utils.AddFrames(sourcePath, destinationPath, borderRatio, squareOption, c, fc, signature, fontSize)
+		if err != nil {
+			fmt.Printf("Error adding frames: %v\n", err)
+		}
+
 	},
 }
 
