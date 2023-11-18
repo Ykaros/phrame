@@ -144,7 +144,7 @@ func AddFrames(sourcePath, outPath string, borderRatio float64, squared bool, c,
 	} else {
 		// Just one image
 		format := filepath.Ext(sourcePath)
-		outPath = sourcePath[:len(sourcePath)-len(format)] + outPath + format
+		outPath = outPath + format
 
 		photo, err := readImage(sourcePath)
 		if err != nil {

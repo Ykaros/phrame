@@ -22,26 +22,26 @@ var rootCmd = &cobra.Command{
 	Use:   "phrame",
 	Short: "A CLI tool written in Go to add a frame to photo(s)",
 	// At least a source is required
-	Args: cobra.MinimumNArgs(1),
+	//Args: cobra.MinimumNArgs(1),
 	Run: func(cmd *cobra.Command, args []string) {
-		sourcePath = args[0]
 
-		// Output path is optional and can be passed as a flag or as an argument
-		if len(args) > 1 {
+		if len(args) == 1 {
+			sourcePath = args[0]
+		} else if len(args) == 2 {
+			sourcePath = args[0]
 			destinationPath = args[1]
-		} else {
-			destinationPath, _ = cmd.Flags().GetString("output")
-
-			// Check if the input path is a directory and output path is not specified
-			if utils.IsDir(sourcePath) && destinationPath == "" {
-				fmt.Print("Do you want to give a name to the output directory?")
-				fmt.Scanln(&destinationPath)
-			}
 		}
 
+		destinationPath, _ = cmd.Flags().GetString("output")
 		borderRatio, _ = cmd.Flags().GetFloat64("border")
 		squareOption, _ = cmd.Flags().GetBool("square")
 		frameColor, _ = cmd.Flags().GetString("color")
+
+		// Check if the input path is a directory and output path is not specified
+		if utils.IsDir(sourcePath) && destinationPath == "" {
+			fmt.Print("Do you want to give a name to the output directory?")
+			fmt.Scanln(&destinationPath)
+		}
 
 		c, err := utils.Hex2Color(frameColor)
 		if err != nil {
@@ -64,4 +64,5 @@ func init() {
 	rootCmd.PersistentFlags().StringVarP(&frameColor, "color", "c", "0", "Frame color options")
 	rootCmd.PersistentFlags().Float64VarP(&borderRatio, "border", "r", 0.1, "Border ratio for the frame")
 	rootCmd.Flags().BoolP("square", "q", false, "Whether the frame is square or not")
+	//_ = rootCmd.MarkFlagRequired("input")
 }

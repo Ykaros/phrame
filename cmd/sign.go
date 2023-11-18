@@ -31,7 +31,6 @@ var signCmd = &cobra.Command{
 		if err != nil {
 			fmt.Printf("Invalid color format: %v\n", err)
 		}
-		fmt.Println(sourcePath, destinationPath, borderRatio, squareOption, c, fc, signature, fontSize)
 		err = utils.AddFrames(sourcePath, destinationPath, borderRatio, squareOption, c, fc, signature, fontSize)
 		if err != nil {
 			fmt.Printf("Error adding frames: %v\n", err)
