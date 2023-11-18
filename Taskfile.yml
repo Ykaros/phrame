@@ -4,10 +4,12 @@ tasks:
     build:
         desc: Build the go binary
         cmds:
-        - go build -o bin/phrame main.go
+        - go build -o phrame main.go
 
     run: 
         desc: Run the app
         cmds:
         - go run main.go
+    
+    
 

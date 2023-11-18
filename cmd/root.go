@@ -21,21 +21,7 @@ var (
 var rootCmd = &cobra.Command{
 	Use:   "phrame",
 	Short: "A CLI tool written in Go to add a frame to photo(s)",
-	// At least a source is required
-	//Args: cobra.MinimumNArgs(1),
 	Run: func(cmd *cobra.Command, args []string) {
-
-		if len(args) == 1 {
-			sourcePath = args[0]
-		} else if len(args) == 2 {
-			sourcePath = args[0]
-			destinationPath = args[1]
-		}
-
-		destinationPath, _ = cmd.Flags().GetString("output")
-		borderRatio, _ = cmd.Flags().GetFloat64("border")
-		squareOption, _ = cmd.Flags().GetBool("square")
-		frameColor, _ = cmd.Flags().GetString("color")
 
 		// Check if the input path is a directory and output path is not specified
 		if utils.IsDir(sourcePath) && destinationPath == "" {
