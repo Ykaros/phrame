@@ -18,6 +18,10 @@ var signCmd = &cobra.Command{
 		fontSize, _ := cmd.Flags().GetInt("fontSize")
 		fontColor, _ := cmd.Flags().GetString("fontColor")
 
+		for signature == "" {
+			fmt.Print("You need to give a signature: ")
+			fmt.Scanln(&signature)
+		}
 		c, err := utils.Hex2Color(frameColor)
 		if err != nil {
 			fmt.Printf("Invalid color format: %v\n", err)
@@ -27,8 +31,7 @@ var signCmd = &cobra.Command{
 		if err != nil {
 			fmt.Printf("Invalid color format: %v\n", err)
 		}
-
-		// Call the AddFrames function with the new parameters
+		fmt.Println(sourcePath, destinationPath, borderRatio, squareOption, c, fc, signature, fontSize)
 		err = utils.AddFrames(sourcePath, destinationPath, borderRatio, squareOption, c, fc, signature, fontSize)
 		if err != nil {
 			fmt.Printf("Error adding frames: %v\n", err)
@@ -39,7 +42,7 @@ var signCmd = &cobra.Command{
 
 func init() {
 	rootCmd.AddCommand(signCmd)
-	rootCmd.Flags().StringP("signature", "s", "", "Signature to add to the image")
-	rootCmd.Flags().IntP("fontSize", "fs", 18, "Font size options")
-	rootCmd.Flags().StringP("fontColor", "fc", "0", "Font color options")
+	rootCmd.PersistentFlags().StringP("signature", "s", "", "Signature to add to the image")
+	rootCmd.PersistentFlags().IntP("fontSize", "x", 30, "Font size options")
+	rootCmd.PersistentFlags().StringP("fontColor", "y", "1", "Font color options")
 }

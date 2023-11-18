@@ -86,13 +86,10 @@ func createCanvas(photo image.Image, borderRatio float64, squared bool, c, fontC
 	draw.Draw(canvas, image.Rect(startX, startY, startX+width, startY+height),
 		photo, image.Point{}, draw.Over)
 
-	//fontSize := 30
-	//fontColor := color.RGBA{0, 0, 0, 255}
-
 	// Create a drawing context for adding text
 	dc := gg.NewContextForRGBA(canvas)
 	dc.SetColor(fontColor)
-	dc.LoadFontFace("Roboto-LightItalic.ttf", float64(fontSize))
+	dc.LoadFontFace("font.ttf", float64(fontSize))
 
 	// Calculate text width and position it in the center horizontally
 	textWidth, _ := dc.MeasureString(signature)
@@ -163,7 +160,7 @@ func AddFrames(sourcePath, outPath string, borderRatio float64, squared bool, c,
 	return nil
 }
 
-func Cut(sourcePath string, grid int) error {
+func Cut(sourcePath, grid string) error {
 	photo, err := readImage(sourcePath)
 	if err != nil {
 		return fmt.Errorf("Error reading image %s: %v", sourcePath, err)
@@ -174,7 +171,7 @@ func Cut(sourcePath string, grid int) error {
 	if err != nil {
 		return err
 	}
-	if grid == 4 {
+	if grid == "4" {
 		// Split the image into 4 parts
 		for i := 0; i < 2; i++ {
 			for j := 0; j < 2; j++ {
@@ -190,7 +187,7 @@ func Cut(sourcePath string, grid int) error {
 				}
 			}
 		}
-	} else if grid == 9 {
+	} else if grid == "9" {
 		// Split the image into 9 parts
 		for i := 0; i < 3; i++ {
 			for j := 0; j < 3; j++ {

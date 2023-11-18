@@ -24,7 +24,7 @@ var rootCmd = &cobra.Command{
 	// At least a source is required
 	Args: cobra.MinimumNArgs(1),
 	Run: func(cmd *cobra.Command, args []string) {
-		sourcePath := args[0]
+		sourcePath = args[0]
 
 		// Output path is optional and can be passed as a flag or as an argument
 		if len(args) > 1 {
@@ -59,9 +59,9 @@ func Execute() {
 }
 
 func init() {
-	rootCmd.PersistentFlags().StringP("input", "i", "", "Original image(s) location")
-	rootCmd.PersistentFlags().StringP("output", "o", "", "Output directory for images with frames")
-	rootCmd.PersistentFlags().StringP("color", "c", "0", "Frame color options")
-	rootCmd.PersistentFlags().Float64P("border", "b", 0.1, "Border ratio for the frame")
-	rootCmd.Flags().BoolP("square", "s", false, "Whether the frame is square or not")
+	rootCmd.PersistentFlags().StringVarP(&sourcePath, "input", "i", "", "Original image(s) location")
+	rootCmd.PersistentFlags().StringVarP(&destinationPath, "output", "o", "", "Output directory for images with frames")
+	rootCmd.PersistentFlags().StringVarP(&frameColor, "color", "c", "0", "Frame color options")
+	rootCmd.PersistentFlags().Float64VarP(&borderRatio, "border", "r", 0.1, "Border ratio for the frame")
+	rootCmd.Flags().BoolP("square", "q", false, "Whether the frame is square or not")
 }

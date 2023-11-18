@@ -9,12 +9,19 @@ import (
 	"github.com/spf13/cobra"
 )
 
+var grids string
+
 // cutCmd represents the cut command
 var cutCmd = &cobra.Command{
 	Use:   "cut",
 	Short: "Cut the image into grids",
 	Run: func(cmd *cobra.Command, args []string) {
-		grids, _ := cmd.Flags().GetInt("grid")
+		if len(args) == 1 {
+			sourcePath = args[0]
+		} else if len(args) > 1 {
+			sourcePath = args[0]
+			grids = args[1]
+		}
 		err := utils.Cut(sourcePath, grids)
 		if err != nil {
 			fmt.Printf("Error cutting image: %v\n", err)
@@ -24,5 +31,5 @@ var cutCmd = &cobra.Command{
 
 func init() {
 	rootCmd.AddCommand(cutCmd)
-	rootCmd.Flags().IntP("grid", "g", 4, "The number of grids to cut the image into")
+	rootCmd.PersistentFlags().StringVarP(&grids, "grid", "g", "4", "The number of grids to cut the image into")
 }
