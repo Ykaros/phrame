@@ -29,8 +29,8 @@ To make it more customizable, it supports loading any font (.ttf) by simply repl
 This subcommand is used to cut the image into several parts (either 4 or 9). 
 ``
 
-<!--## License
+License
 
-This project is licensed under the MIT License - see the [LICENSE.md](LICENSE.md) file for details-->
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details
 
 
