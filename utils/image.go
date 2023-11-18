@@ -2,6 +2,7 @@ package utils
 
 import (
 	"fmt"
+	"github.com/fogleman/gg"
 	"image"
 	"image/color"
 	"image/draw"
@@ -50,54 +51,57 @@ func saveImage(path string, photo image.Image) error {
 	return nil
 }
 
-func createCanvas(photo image.Image, borderRatio float64, squared bool, c color.RGBA) *image.RGBA {
+func createCanvas(photo image.Image, borderRatio float64, squared bool, c, fontColor color.RGBA, signature string, fontSize int) (canvas *image.RGBA) {
 	// Determine the size of the border and the square
 	width, height := photo.Bounds().Dx(), photo.Bounds().Dy()
+	var startX, startY int
 	if squared {
 		borderWidth := int(borderRatio * float64(min(width, height)))
 		squareSize := max(width, height) + 2*borderWidth
 
 		// Create a squared RGBA canvas
-		canvas := image.NewRGBA(image.Rect(0, 0, squareSize, squareSize))
+		canvas = image.NewRGBA(image.Rect(0, 0, squareSize, squareSize))
 
 		// Calculate the starting point
-		startX := (squareSize - width) / 2
-		startY := (squareSize - height) / 2
-
-		// Fill the entire canvas with white
-		// More color options
-		draw.Draw(canvas, canvas.Bounds(),
-			&image.Uniform{c}, image.Point{}, draw.Over)
-
-		// Place the photo at the center of the canvas
-		draw.Draw(canvas, image.Rect(startX, startY, startX+width, startY+height),
-			photo, image.Point{}, draw.Over)
-		return canvas
+		startX = (squareSize - width) / 2
+		startY = (squareSize - height) / 2
 	} else {
 		borderWidth := int(borderRatio * float64(width))
 		borderHeight := int(borderRatio * float64(height))
 		// Create a squared RGBA canvas
-		canvas := image.NewRGBA(image.Rect(0, 0,
+		canvas = image.NewRGBA(image.Rect(0, 0,
 			width+2*borderWidth, height+2*borderHeight))
 
 		// Calculate the starting point
-		startX := borderWidth
-		startY := borderHeight
-
-		// Fill the entire canvas with white
-		// More color options
-		draw.Draw(canvas, canvas.Bounds(),
-			&image.Uniform{c}, image.Point{}, draw.Over)
-
-		// Place the photo at the center of the canvas
-		draw.Draw(canvas, image.Rect(startX, startY, startX+width, startY+height),
-			photo, image.Point{}, draw.Over)
-		return canvas
+		startX = borderWidth
+		startY = borderHeight
 	}
 
+	// Fill the entire canvas with white
+	// More color options
+	draw.Draw(canvas, canvas.Bounds(),
+		&image.Uniform{c}, image.Point{}, draw.Over)
+
+	// Place the photo at the center of the canvas
+	draw.Draw(canvas, image.Rect(startX, startY, startX+width, startY+height),
+		photo, image.Point{}, draw.Over)
+
+	//fontSize := 30
+	//fontColor := color.RGBA{0, 0, 0, 255}
+
+	// Create a drawing context for adding text
+	dc := gg.NewContextForRGBA(canvas)
+	dc.SetColor(fontColor)
+	dc.LoadFontFace("Roboto-LightItalic.ttf", float64(fontSize))
+
+	// Calculate text width and position it in the center horizontally
+	textWidth, _ := dc.MeasureString(signature)
+	dc.DrawString(signature, (float64(canvas.Bounds().Dx())-textWidth)/2, float64(canvas.Bounds().Dy()-fontSize))
+
+	return
 }
 
-func AddFrames(sourcePath, outPath string, borderRatio float64, squared bool, c color.RGBA) error {
+func AddFrames(sourcePath, outPath string, borderRatio float64, squared bool, c, fontColor color.RGBA, signature string, fontSize int) error {
 	if outPath == "" || IsDir(outPath) {
 		currentTime := time.Now()
 		outPath += currentTime.Format("2112_01_02_03_04_05")
@@ -129,7 +133,7 @@ func AddFrames(sourcePath, outPath string, borderRatio float64, squared bool, c 
 					fmt.Printf("Error reading image %s: %v\n", imgPath, err)
 					return
 				}
-				canvas := createCanvas(photo, borderRatio, squared, c)
+				canvas := createCanvas(photo, borderRatio, squared, c, fontColor, signature, fontSize)
 				err = saveImage(savePath, canvas)
 				if err != nil {
 					fmt.Printf("Error saving image %s: %v\n", savePath, err)
@@ -149,7 +153,7 @@ func AddFrames(sourcePath, outPath string, borderRatio float64, squared bool, c 
 		if err != nil {
 			return fmt.Errorf("Error reading image %s: %v", sourcePath, err)
 		}
-		canvas := createCanvas(photo, borderRatio, squared, c)
+		canvas := createCanvas(photo, borderRatio, squared, c, fontColor, signature, fontSize)
 		err = saveImage(outPath, canvas)
 		if err != nil {
 			return fmt.Errorf("Error saving image %s: %v", outPath, err)
