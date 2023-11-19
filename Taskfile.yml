@@ -10,6 +10,11 @@ tasks:
         desc: Run the app
         cmds:
         - go run main.go
+        
+    test:
+        desc: Test the app
+        cmds:
+        - go run main.go -i test -o out
     
     
 

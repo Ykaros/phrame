@@ -6,18 +6,19 @@ One CLI tool to add frames to photos, just that and nothing more!
 
 These instructions will get you a copy of the project up and running on your local machine for development and testing purposes. See deployment for notes on how to deploy the project on a live system.
 
-### Prerequisites
-
-
-
 ### Installing
 
-
-
 ### Running Tests
+Use:
+```
+task test
+```
+If everything goes well, you should see: `Image successfully saved to: out/test.png ✓`.
 
 ## CLI Manual
 The fundamental function of this CLI is to add customizable frames to images. 
+
+
 
 Except the root command, there are two available subcommands: sign and cut. 
 ### Sign
@@ -29,7 +30,7 @@ To make it more customizable, it supports loading any font (.ttf) by simply repl
 This subcommand is used to cut the image into several parts (either 4 or 9). 
 ``
 
-License
+## License
 
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details
 
