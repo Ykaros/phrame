@@ -11,8 +11,9 @@ import (
 
 // signCmd represents the sign command
 var signCmd = &cobra.Command{
-	Use:   "sign",
-	Short: "Sign the framed image",
+	Use:     "sign",
+	Short:   "Sign the framed image",
+	Example: "phrame sign -s [signature] -i [input_path] -o [output_path] -r [border_ratio] -c [frame_color] -x [font_size] -y [font_color]",
 	Run: func(cmd *cobra.Command, args []string) {
 		signature, _ := cmd.Flags().GetString("signature")
 		fontSize, _ := cmd.Flags().GetInt("fontSize")
@@ -42,6 +43,6 @@ var signCmd = &cobra.Command{
 func init() {
 	rootCmd.AddCommand(signCmd)
 	rootCmd.PersistentFlags().StringP("signature", "s", "", "Signature to add to the image")
-	rootCmd.PersistentFlags().IntP("fontSize", "x", 30, "Font size options")
-	rootCmd.PersistentFlags().StringP("fontColor", "y", "1", "Font color options")
+	rootCmd.PersistentFlags().IntP("fontSize", "x", 30, "Font size options (might take some experiments to find the best size")
+	rootCmd.PersistentFlags().StringP("fontColor", "y", "1", "Font color options (same as frame color options)")
 }

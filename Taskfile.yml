@@ -16,5 +16,8 @@ tasks:
         cmds:
         - go run main.go -i test -o out
     
+    global:
+        desc: Set the command as a global command
+        cmds:
+        - sudo mv phrame /usr/local/bin/
     
-

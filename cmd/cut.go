@@ -13,8 +13,9 @@ var grids string
 
 // cutCmd represents the cut command
 var cutCmd = &cobra.Command{
-	Use:   "cut",
-	Short: "Cut the image into grids",
+	Use:     "cut",
+	Short:   "Cut the image into grids",
+	Example: "phrame cut [image_path] -g [4 or 9]",
 	Run: func(cmd *cobra.Command, args []string) {
 		if len(args) == 1 {
 			sourcePath = args[0]
@@ -31,5 +32,5 @@ var cutCmd = &cobra.Command{
 
 func init() {
 	rootCmd.AddCommand(cutCmd)
-	rootCmd.PersistentFlags().StringVarP(&grids, "grid", "g", "4", "The number of grids to cut the image into")
+	rootCmd.PersistentFlags().StringVarP(&grids, "grid", "g", "4", "The number of grids to cut the image into (4 or 9)")
 }
