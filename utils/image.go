@@ -60,10 +60,12 @@ func createCanvas(photo image.Image, borderRatio float64, squared bool, c, fontC
 	// Determine the size of the border and the position of the photo
 	width, height := photo.Bounds().Dx(), photo.Bounds().Dy()
 	var startX, startY int
+	var frameWidth float64
 
 	// Squared or original ratio
 	if squared {
 		borderWidth := int(borderRatio * float64(min(width, height)))
+		frameWidth = float64(borderWidth)
 		squareSize := max(width, height) + 2*borderWidth
 
 		// Create a squared RGBA canvas
@@ -75,6 +77,7 @@ func createCanvas(photo image.Image, borderRatio float64, squared bool, c, fontC
 	} else {
 		borderWidth := int(borderRatio * float64(width))
 		borderHeight := int(borderRatio * float64(height))
+		frameWidth = float64(borderHeight)
 
 		// Create a squared RGBA canvas
 		canvas = image.NewRGBA(image.Rect(0, 0,
@@ -97,7 +100,11 @@ func createCanvas(photo image.Image, borderRatio float64, squared bool, c, fontC
 		// Sign the framed image
 		dc := gg.NewContextForRGBA(canvas)
 		dc.SetColor(fontColor)
+
 		// Default font: Inter-Regular
+		if fontSize == 0 {
+			fontSize = int(frameWidth / 4.5)
+		}
 		dc.LoadFontFace("font.ttf", float64(fontSize))
 
 		// Determine the signature position

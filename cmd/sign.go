@@ -43,6 +43,6 @@ var signCmd = &cobra.Command{
 func init() {
 	rootCmd.AddCommand(signCmd)
 	rootCmd.PersistentFlags().StringP("signature", "s", "", "Signature to add to the image")
-	rootCmd.PersistentFlags().IntP("fontSize", "x", 30, "Font size options (might take some experiments to find the best size")
+	rootCmd.PersistentFlags().IntP("fontSize", "x", 0, "Font size options (might take some experiments to find the best size")
 	rootCmd.PersistentFlags().StringP("fontColor", "y", "1", "Font color options (same as frame color options)")
 }

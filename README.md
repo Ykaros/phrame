@@ -2,13 +2,25 @@
 
 Phrame: A Simple CLI Tool for Adding Frames to Photos
 
+---
+
 ## Getting Started
 
-These instructions will get you a copy of the project up and running on your local machine for development and testing purposes. See deployment for notes on how to deploy the project on a live system.
+There are pre-compiled binary files at [release page](https://github.com/Ykaros/phrame/releases)
 
-There will be a release version soon..
+Download and compile from sources:
+```
+go get github.com/Ykaros/phrame
+```
+Install just the binary with Go:
+```
+go install github.com/Ykaros/phrame
+```
 
-### Installing
+### Manual Installation
+
+
+
 To build locally, first
 ```
 git clone https://github.com/Ykaros/phrame.git
@@ -33,11 +45,17 @@ task test
 ```
 If everything goes well, you should see: `Image successfully saved to: out/test.png ✓`.
 
+---
+
 ## CLI Manual
+
+> [!TIP]
+> Only [input_path] (either an image or a folder) is required. Most of the time, it can just be `phrame -i [input_path]` 
+
 The fundamental function of this CLI is to add customizable frames to images. To add frame(s) to image(s), use the following command:
 
 ```
-phrame -q -i test -o out -r 0.1 -c "#FFFFFF"
+phrame -q -i [input_path] -o [output_path] -r [border_ratio] -c [frame_color]
 ```
 
 Except the root command, there are two available subcommands: sign and cut. 
@@ -54,6 +72,8 @@ The cut subcommand can be used to divide an image into either four or nine equal
 ```
 phrame cut [image_path] -g [4 or 9]
 ```
+
+---
 
 ## License
 
